@@ -16,7 +16,7 @@ class GuardArea:
                         self.guard_start_position = x, y
                     self.area[x, y] = element
 
-    def guard_steps(self) -> Iterator[tuple[position, direction]]:
+    def __iter__(self) -> Iterator[tuple[position, direction]]:
         directions: tuple[direction, ...] = ((-1, 0), (0, 1), (1, 0), (0, -1))
         guard_d: direction = directions[3]
         guard_p: position = self.guard_start_position
@@ -32,28 +32,28 @@ class GuardArea:
 
 # guard_area = GuardArea('6_exemple.txt')
 guard_area = GuardArea('6.txt')
+guard_way: set[position] = set()
 
 
 def guard_out() -> int:
-    guard_way: set[position] = set()
-    for pos, _ in guard_area.guard_steps():
+    for pos, _ in guard_area:
         guard_way.add(pos)
     return len(guard_way)
 
 
 def guard_loops():
     def is_guard_loop() -> bool:
-        guard_way: set[tuple[position, direction]] = set()
-        for pos_dir in guard_area.guard_steps():
-            if pos_dir in guard_way:
+        guard_way_loop: set[tuple[position, direction]] = set()
+        for pos_dir in guard_area:
+            if pos_dir in guard_way_loop:
                 return True
-            guard_way.add(pos_dir)
+            guard_way_loop.add(pos_dir)
         else:
             return False
 
     loops = 0
     for case, element in guard_area.area.items():
-        if element != '.':
+        if element != '.' or case not in guard_way:
             continue
 
         guard_area.area[case] = '#'
