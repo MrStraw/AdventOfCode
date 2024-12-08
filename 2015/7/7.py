@@ -1,30 +1,56 @@
 class Circuit:
 
     def __init__(self):
-        self.signals_provides: dict[str, int] = {}
-        self.wires_instructions: dict[str, set[tuple[str, str]]] = {}  # in vers instruction, out
+        self.wires_instructions: dict[str, str] = {}
+        self.wires_power: dict[str, int] = {}
         with open('7.txt') as f:
             for line in f:
-                match line.split():
+                instruction, wire = line.rstrip().split(' -> ')
+                self.wires_instructions[wire] = instruction
 
-                    case [value, '->', wire_in]:
-                        self.wires_instructions[wire_in] = value
+    def __getitem__(self, wire: str) -> int:
+        if wire not in self.wires_power:
+            self.wires_power[wire] = self.__get_power_from_instruction(wire)
+        return self.wires_power[wire]
 
-                    case [wire_in_a, shift, impulsion, '->', wire_out] if shift.endswith('SHIFT'):
-                        if wire_in not in self.wires_instructions:
-                            self.wires_instructions[wire_in] = set()
-                        self.wires_instructions[wire_in].add((f'{shift} {impulsion}'), wire_out)
+    def __setitem__(self, wire: str, power: int):
+        self.wires_power[wire] = power
 
-                    case [wire_in_a, instruction, wire_in_b, '->', wire_out] if not wire_in_b.isdigit():
-                        if wire_in_a not in self.wires_instructions:
-                            self.wires_instructions[wire_in_a] = set()
-                        self.wires_instructions[wire_in_a].add(f'{instruction} {impulsion}')
+    def __get_power_from_instruction(self, wire: str) -> int:
+        match self.wires_instructions[wire].split():
 
-                    case [instruction, wire_in, '->', wire_out]:
-                        print(instruction, wire_in, "dans", wire_out)
+            case [power] if power.isdigit():
+                return int(power)
 
-                    case whut:
-                        print(whut)
+            case [wire_from]:
+                return self[wire_from]
+
+            case [wire_from, shift, shift_impulsion] if shift in {'RSHIFT', 'LSHIFT'}:
+                wire_, shift_ = self[wire_from], int(shift_impulsion)
+                return wire_ << shift_ if shift == 'LSHIFT' else wire_ >> shift_
+
+            case [int_in, instruction, wire_from_b] if int_in.isdigit() and instruction in {'OR', 'AND'}:
+                int_, wire_ = int(int_in), self[wire_from_b]
+                return int_ & wire_ if instruction == 'AND' else int_ | wire_
+
+            case [wire_from_a, instruction, wire_from_b] if instruction in {'OR', 'AND'}:
+                wire_a, wire_b = self[wire_from_a], self[wire_from_b]
+                return wire_a & wire_b if instruction == 'AND' else wire_a | wire_b
+
+            case ['NOT', wire_from]:
+                return ~self[wire_from] & 0xFFFF
+
+            case unscheduled_instruction:
+                err = Exception("Instruction non prévue")
+                err.add_note(unscheduled_instruction)
+                raise err
 
 
 circuit = Circuit()
+
+first_a = circuit['a']
+print(first_a)
+
+circuit.wires_power.clear()
+circuit['b'] = first_a
+print(circuit['a'])
