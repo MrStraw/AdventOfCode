@@ -18,7 +18,7 @@ class GuardArea:
 
     def __iter__(self) -> Iterator[tuple[position, direction]]:
         directions: tuple[direction, ...] = ((-1, 0), (0, 1), (1, 0), (0, -1))
-        guard_d: direction = directions[3]
+        guard_d: direction = directions[-1]
         guard_p: position = self.guard_start_position
         while True:
             try:
@@ -30,7 +30,6 @@ class GuardArea:
             yield guard_p, guard_d
 
 
-# guard_area = GuardArea('6_exemple.txt')
 guard_area = GuardArea('6.txt')
 guard_way: set[position] = set()
 
