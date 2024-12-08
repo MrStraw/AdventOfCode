@@ -1,1 +1,0 @@
-print(tuple('XMAS'))
