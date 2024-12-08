@@ -23,13 +23,12 @@ def calcul_antinodes() -> set[coord]:
         for ant_a, ant_b in itertools.product(antennas_pos, repeat=2):
             if ant_a is ant_b:
                 continue
-            for i in itertools.count(1):
-                anti_x, anti_y = ant_a[0] + (ant_a[0] - ant_b[0]) * i, ant_a[1] + (ant_a[1] - ant_b[1]) * i
+            for wave in itertools.count(1):
+                anti_x, anti_y = (ant_a[c] + (ant_a[c] - ant_b[c]) * wave for c in (0, 1))
                 if not (0 <= anti_x <= map_len[0]) or not (0 <= anti_y <= map_len[1]):
                     break
                 all_antis.add((anti_x, anti_y))
     return all_antis | all_antennas_pos
 
 
-antis_ = calcul_antinodes()
-print(len(antis_))
+print(len(calcul_antinodes()))
