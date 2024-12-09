@@ -8,6 +8,10 @@ class Block:
 
     def __bool__(self):
         return self.id != -1
+    
+    def __ge__(self, other):
+        if isinstance(other, Block):
+            return len(self) >= len(other)
 
 
 class DiskFragmenter:
@@ -31,7 +35,7 @@ class DiskFragmenter:
                     break
                 if free:
                     continue
-                if len(free) >= len(block):
+                if free >= block:
                     i_b, i_f = self.disk_repr.index(block), self.disk_repr.index(free)
                     self.disk_repr[i_b - 1].lenght += len(block)
                     self.disk_repr.remove(block)
