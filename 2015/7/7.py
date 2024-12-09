@@ -9,8 +9,10 @@ class Circuit:
                 self.wires_instructions[wire] = instruction
 
     def __getitem__(self, wire: str) -> int:
-        if wire not in self.wires_power:
-            self.wires_power[wire] = self.__get_power_from_instruction(wire)
+        if wire.isdigit():
+            return int(wire)
+        elif wire not in self.wires_power:
+            self.wires_power[wire] = self.__get_power_from_instruction(wire) & 0xFFFF
         return self.wires_power[wire]
 
     def __setitem__(self, wire: str, power: int):
@@ -19,9 +21,6 @@ class Circuit:
     def __get_power_from_instruction(self, wire: str) -> int:
         match self.wires_instructions[wire].split():
 
-            case [power] if power.isdigit():
-                return int(power)
-
             case [wire_from]:
                 return self[wire_from]
 
@@ -29,16 +28,12 @@ class Circuit:
                 wire_, shift_ = self[wire_from], int(shift_impulsion)
                 return wire_ << shift_ if shift == 'LSHIFT' else wire_ >> shift_
 
-            case [int_in, instruction, wire_from_b] if int_in.isdigit() and instruction in {'OR', 'AND'}:
-                int_, wire_ = int(int_in), self[wire_from_b]
-                return int_ & wire_ if instruction == 'AND' else int_ | wire_
-
             case [wire_from_a, instruction, wire_from_b] if instruction in {'OR', 'AND'}:
                 wire_a, wire_b = self[wire_from_a], self[wire_from_b]
                 return wire_a & wire_b if instruction == 'AND' else wire_a | wire_b
 
             case ['NOT', wire_from]:
-                return ~self[wire_from] & 0xFFFF
+                return ~self[wire_from]
 
             case unscheduled_instruction:
                 err = Exception("Instruction non prévue")
