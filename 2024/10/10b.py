@@ -2,17 +2,18 @@ from typing import Iterable
 
 
 class Cell:
-    all_cells_pos: dict[tuple[int, int], 'Cell'] = {}
+    __all_cells_pos: dict[tuple[int, int], 'Cell'] = {}
+    __directions = {(0, 1), (0, -1), (1, 0), (-1, 0)}
 
     def __new__(cls, x: int, y: int, level: int = None):
-        match level is not None, (pos := (x, y)) in cls.all_cells_pos:
+        match level is not None, (pos := (x, y)) in cls.__all_cells_pos:
             case False, True:
                 pass
             case False, False:
                 return None
             case True, False:
-                cls.all_cells_pos[pos] = super().__new__(cls)
-        return cls.all_cells_pos[pos]
+                cls.__all_cells_pos[pos] = super().__new__(cls)
+        return cls.__all_cells_pos[pos]
 
     def __init__(self, x: int, y: int, level: int = None):
         if hasattr(self, 'level'):
@@ -26,7 +27,7 @@ class Cell:
         next_cells_ = set()
         if self.level == 9:
             return next_cells_
-        for look_x, look_y in {(0, 1), (0, -1), (1, 0), (-1, 0)}:
+        for look_x, look_y in self.__directions:
             look_cell = Cell(self.x + look_x, self.y + look_y)
             if look_cell and look_cell.level == self.level + 1:
                 next_cells_.add(look_cell)
