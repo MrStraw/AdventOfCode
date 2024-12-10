@@ -1,3 +1,6 @@
+from typing import Iterable
+
+
 class Cell:
     all_cells_pos: dict[tuple[int, int], 'Cell'] = {}
 
@@ -7,8 +10,6 @@ class Cell:
                 pass
             case False, False:
                 return None
-            case True, True:
-                raise TypeError("Cell déjà existante")
             case True, False:
                 cls.all_cells_pos[pos] = super().__new__(cls)
         return cls.all_cells_pos[pos]
@@ -40,12 +41,11 @@ class LavaMap:
         with open('10.txt') as f:
             for y, row in enumerate(f):
                 for x, level in enumerate(row.rstrip()):
-                    if level.isdigit():
-                        self.all_cells.add(Cell(x, y, int(level)))
-                        if level == '0':
-                            self.start_cells.add(Cell(x, y))
+                    self.all_cells.add(Cell(x, y, int(level)))
+                    if level == '0':
+                        self.start_cells.add(Cell(x, y))
 
-    def continue_ways(self, ways: list[list[Cell]]) -> list[list[Cell]]:
+    def continue_ways(self, ways: Iterable[list[Cell]]) -> list[list[Cell]]:
         updates_ways: list[list[Cell]] = []
 
         for way_ in ways:
@@ -62,5 +62,5 @@ class LavaMap:
 
 
 lava_map = LavaMap()
-all_ways = lava_map.continue_ways([[c] for c in lava_map.start_cells])
+all_ways = lava_map.continue_ways([c] for c in lava_map.start_cells)
 print(len(all_ways))
