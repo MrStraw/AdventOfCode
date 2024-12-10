@@ -16,7 +16,9 @@ import itertools
 from datetime import datetime
 
 start = datetime.now()
-for i in itertools.permutations(range(11)):
+for i in itertools.permutations((1, 2, 1)):
+    print(i)
+    break
     # for y in itertools.pairwise((*i, i[0])):
     #     pass
     pass
