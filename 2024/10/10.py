@@ -31,11 +31,11 @@ class LavaMap:
                             print(pos_search, "ajouté au way")
                             poss_to_search.add(pos_search)
                         # else:
-                            # print(pos_search, "rejeté")
+                        # print(pos_search, "rejeté")
                 poss_to_search.remove(to_search)
 
         return pos_in_way
-
+    
 
 lava_map = LavaMap()
 total_score = 0

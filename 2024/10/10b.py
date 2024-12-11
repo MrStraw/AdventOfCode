@@ -27,11 +27,27 @@ class Cell:
         next_cells_ = set()
         if self.level == 9:
             return next_cells_
-        for look_x, look_y in self.__directions:
+        for look_x, look_y in Cell.__directions:
             look_cell = Cell(self.x + look_x, self.y + look_y)
             if look_cell and look_cell.level == self.level + 1:
                 next_cells_.add(look_cell)
         return next_cells_
+
+    def propage(self):
+        cells = [self]
+        way_continue = True
+        while way_continue:
+            way_continue = False
+            new_cells = []
+            for cell in cells:
+                next_cells = cell.next_cells
+                if next_cells:
+                    way_continue = True
+                    new_cells += [next_cell for next_cell in cell.next_cells]
+                elif cell.level == 9:
+                    new_cells.append(cell)
+            cells = new_cells
+        return cells
 
 
 class LavaMap:
@@ -46,22 +62,21 @@ class LavaMap:
                     if level == '0':
                         self.start_cells.add(Cell(x, y))
 
-    def continue_ways(self, ways: Iterable[list[Cell]]) -> list[list[Cell]]:
-        updates_ways: list[list[Cell]] = []
-
-        for way_ in ways:
-            last_cell = way_[-1]
-            next_cells = last_cell.next_cells
-            if next_cells:
-                updates_ways += [[*way_, next_cell] for next_cell in next_cells]
-            elif last_cell.level == 9:
-                updates_ways.append(way_)
-
-        if any(way_[-1].next_cells for way_ in updates_ways):
-            updates_ways = self.continue_ways(updates_ways)
-        return updates_ways
+    # def continue_ways(self, ways: Iterable[list[Cell]]) -> list[list[Cell]]:
+    #     updates_ways: list[list[Cell]] = []
+    # 
+    #     for way_ in ways:
+    #         last_cell = way_[-1]
+    #         next_cells = last_cell.next_cells
+    #         if next_cells:
+    #             updates_ways += [[*way_, next_cell] for next_cell in next_cells]
+    #         elif last_cell.level == 9:
+    #             updates_ways.append(way_)
+    # 
+    #     if any(way_[-1].next_cells for way_ in updates_ways):
+    #         updates_ways = self.continue_ways(updates_ways)
+    #     return updates_ways
 
 
 lava_map = LavaMap()
-all_ways = lava_map.continue_ways([c] for c in lava_map.start_cells)
-print(len(all_ways))
+print(sum(len(cell.propage()) for cell in lava_map.start_cells))
