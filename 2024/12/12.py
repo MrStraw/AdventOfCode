@@ -59,10 +59,9 @@ class PlotArrangement:
             axes[f_axe].add(f_to_check)
         for axe, fence_to_check in axes.items():
             for f1, f2 in pairwise(sorted(fence_to_check)):
-                check1 = (f1 + 1 != f2)
-                check2 = axe.is_integer() and all(((f1 + 0.5, axe - y_) in self.fences) for y_ in (0, 1))
-                check3 = not axe.is_integer() and all(((f1 + 0.5, axe + x_) in self.fences) for x_ in (0.5, -0.5))
-                sides_ += (check1 or check2 or check3)
+                sides_ += f1 + 1 != f2 or all(
+                    ((f1 + 0.5, (axe - 0.5 if axe.is_integer() else axe) + _) in self.fences) for _ in (-0.5, 0.5))
+
         return sides_ + len(axes)
 
     @property
