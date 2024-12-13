@@ -29,6 +29,7 @@ class PlotArrangement:
         self.plant_type = guarden.plots[x, y]
         self.fences: set[tuple[float, float]] = set()
         self.__classifie_from_coord(x, y)
+        PlotArrangement.classified |= self.plots
 
     def __str__(self):
         return f"{self.plant_type}: {self.price} ({len(self.plots)}p x {self.sides}s)"
@@ -36,16 +37,11 @@ class PlotArrangement:
     def __classifie_from_coord(self, x: int, y: int):
         for look_x, look_y in PlotArrangement.look_to:
             coord_look: Coord = x + look_x, y + look_y
-            plant_type = guarden.plots.get(coord_look)
-            if not plant_type:
-                self.fences.add(((x + coord_look[0]) / 2, (y + coord_look[1]) / 2))
-                continue
             if coord_look in self.plots:
                 continue
-            if plant_type != self.plant_type:
+            if guarden.plots.get(coord_look, '_') != self.plant_type:
                 self.fences.add(((x + coord_look[0]) / 2, (y + coord_look[1]) / 2))
                 continue
-            PlotArrangement.classified.add(coord_look)
             self.plots.add(coord_look)
             self.__classifie_from_coord(*coord_look)
 
