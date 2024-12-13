@@ -53,15 +53,17 @@ class PlotArrangement:
     def sides(self) -> int:
         axes, sides_ = {}, 0
         for fence_x, fence_y in self.fences:
-            f_axe, f_to_check = (fence_y + 0.5, fence_x) if fence_x.is_integer() else (fence_x, fence_y)
+            f_axe, f_to_check = (fence_y - 0.3, fence_x) if fence_x.is_integer() else (fence_x - 0.4, fence_y)
             if not f_axe in axes:
                 axes[f_axe] = set()
             axes[f_axe].add(f_to_check)
         for axe, fence_to_check in axes.items():
             for f1, f2 in pairwise(sorted(fence_to_check)):
-                sides_ += f1 + 1 != f2 or all(
-                    ((f1 + 0.5, (axe - 0.5 if axe.is_integer() else axe) + _) in self.fences) for _ in (-0.5, 0.5))
-
+                if round(axe % 1, 1) == 0.1:  # fence on X axe
+                    is_cross = all(((axe + _, f1 + 0.5) in self.fences) for _ in (-0.1, 0.9))
+                else:  # fence on Y axe
+                    is_cross = all(((f1 + 0.5, axe + _) in self.fences) for _ in (-0.2, 0.8))
+                sides_ += (f1 + 1 != f2) or is_cross
         return sides_ + len(axes)
 
     @property
@@ -72,11 +74,4 @@ class PlotArrangement:
 for coord in guarden:
     if coord not in PlotArrangement.classified:
         PlotArrangement(*coord)
-
-total_prices = 0
-for pl in PlotArrangement.all_arrangements:
-    if pl.plant_type != 'J':
-        continue
-    print(pl)
-    total_prices += pl.price
-print(total_prices)
+print(sum(pl.price for pl in PlotArrangement.all_arrangements))
