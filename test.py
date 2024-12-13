@@ -12,14 +12,5 @@
 # print("Method 2:", timeit.timeit(method2, setup=setup, number=1000000))
 # print("Method 3:", timeit.timeit(method3, setup=setup, number=1000000))
 # print("Method 4:", timeit.timeit(method4, setup=setup, number=1000000))
-import itertools
-from datetime import datetime
 
-start = datetime.now()
-for i in itertools.permutations((1, 2, 1)):
-    print(i)
-    break
-    # for y in itertools.pairwise((*i, i[0])):
-    #     pass
-    pass
-print(datetime.now() - start)
+
