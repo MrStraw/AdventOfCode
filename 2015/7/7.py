@@ -12,7 +12,7 @@ class Circuit:
         if wire.isdigit():
             return int(wire)
         elif wire not in self.wires_power:
-            self.wires_power[wire] = self.__get_power_from_instruction(wire) & 0xFFFF
+            self[wire] = self.__get_power_from_instruction(wire) & 0xFFFF
         return self.wires_power[wire]
 
     def __setitem__(self, wire: str, power: int):
