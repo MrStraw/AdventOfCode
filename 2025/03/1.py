@@ -6,10 +6,6 @@ def largest_bank_joltage(bank: str) -> int:
 
 
 
-sum_joltage = 0
-for i, bank_ in enumerate(open('prod.txt'), start=1):
-    sum_joltage += largest_bank_joltage(bank_)
-
-print(sum_joltage)
+print(sum(largest_bank_joltage(bank_.strip()) for bank_ in open('prod.txt')))
 
 

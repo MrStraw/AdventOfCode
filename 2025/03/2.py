@@ -12,9 +12,14 @@ def largest_bank_joltage_2(bank: str) -> int:
             break
 
     return int(selected)
-    
 
-sum_joltage = 0
-for i, bank_ in enumerate(open('prod.txt'), start=1):
-    sum_joltage += largest_bank_joltage_2(bank_.strip())
-print(sum_joltage)
+
+def solve(source, digits, result=''):
+    if len(result) == digits:
+        return result
+    chunk = source[:len(source) - (digits - len(result)) + 1]
+    max_char = max(chunk)
+    return int(solve(source[chunk.find(max_char) + 1:], digits, result + max_char))
+
+# print(sum(largest_bank_joltage_2(bank_.strip()) for bank_ in open('prod.txt')))
+print(sum(solve(bank_.strip(), 12) for bank_ in open('prod.txt')))
