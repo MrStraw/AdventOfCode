@@ -14,12 +14,11 @@ def largest_bank_joltage_2(bank: str) -> int:
     return int(selected)
 
 
-def solve(source, digits, result=''):
+def net_rep(source, digits, result=''):
     if len(result) == digits:
         return result
     chunk = source[:len(source) - (digits - len(result)) + 1]
     max_char = max(chunk)
-    return int(solve(source[chunk.find(max_char) + 1:], digits, result + max_char))
+    return int(net_rep(source[chunk.find(max_char) + 1:], digits, result + max_char))
 
-# print(sum(largest_bank_joltage_2(bank_.strip()) for bank_ in open('prod.txt')))
-print(sum(solve(bank_.strip(), 12) for bank_ in open('prod.txt')))
+print(sum(net_rep(bank_.strip(), 12) for bank_ in open('prod.txt')))
