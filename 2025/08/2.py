@@ -1,4 +1,3 @@
-from collections import defaultdict
 from dataclasses import dataclass
 from math import sqrt
 
@@ -8,7 +7,7 @@ class Boxe:
     x: int
     y: int
     z: int
-    
+
     def __repr__(self):
         return f"({self.x},{self.y},{self.z})"
 
@@ -23,8 +22,9 @@ for boxe_pos in open('prod.txt'):
     for other_boxe in boxes:
         distances.add((boxe - other_boxe, boxe, other_boxe))
     boxes.add(boxe)
-top_distances: list[tuple[float, Boxe, Boxe]] = sorted(distances, key=lambda b: b[0])[:1000]
+top_distances: list[tuple[float, Boxe, Boxe]] = sorted(distances, key=lambda b: b[0])
 
+len_total = len(boxes)
 circuits: dict[Boxe, int] = {}
 for i, (_, b1, b2) in enumerate(top_distances, start=1):
     if b1 not in circuits and b2 not in circuits:
@@ -38,9 +38,7 @@ for i, (_, b1, b2) in enumerate(top_distances, start=1):
         for b, c in circuits.items():
             if c == old_c:
                 circuits[b] = circuits[b1]
-
-top_circuit = defaultdict(int)
-for c_id in circuits.values():
-    top_circuit[c_id] += 1
-top_circuit = sorted(top_circuit.values(), reverse=True)
-print(top_circuit[:3], top_circuit[0] * top_circuit[1] * top_circuit[2])
+                
+    if len_total == len(circuits) and len(set(circuits.values())) == 1:
+        print(b1.x * b2.x)
+        break
