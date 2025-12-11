@@ -13,9 +13,6 @@ def instructions() -> Iterator[tuple[str, int]]:
 def rotate(start: int, direction: str, value: int) -> int:
     return (start + (-value if direction == 'L' else value)) % 100
 
-# print(rotate(0, 'L', 101))
-# print(rotate(99, 'R', 1))
-
 step, i = 50, 0
 for d, r in instructions():
     step = rotate(step, d, r)
